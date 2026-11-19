@@ -1,0 +1,9 @@
+{
+  "name": "dr-eggbot",
+  "version": "2.0.0",
+  "description": "Turn a job you do by hand into a Claude agent: find the goal, capture the process, close the feedback loop, build the agent and its schedule. Includes healthchecks for friction and wasteful scheduled tasks.",
+  "author": {
+    "name": "Dr. Eggbot"
+  },
+  "keywords": ["agents", "automation", "subagents", "scheduled-tasks", "process"]
+}

@@ -32,10 +32,10 @@ Ask for three real cases, including one that went wrong or needed a different ca
 - When should the agent stop and hand the case back to the person instead of deciding?
 - What must the agent never do?
 
-Write each answer as a rule in the plan. Then ask: "What have I not asked about yet?"
+Write each answer as a rule in the plan. Save the three cases in the plan too, each with the outcome that was right. They become the agent's saved cases, rerun before any change to the process. Then ask: "What have I not asked about yet?"
 
 ## 4. Better way
 
 Check the process against the goal. Name any step that does not serve the goal and any step an agent could do differently: read the inbox through a connector, click through the site in a browser, write a small script. Offer the change. Keep their way if they prefer it.
 
-Done when the person confirms the steps and the rules.
+Done when the person confirms the steps and the rules, and the plan holds the saved cases.

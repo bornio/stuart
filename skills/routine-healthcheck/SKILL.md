@@ -18,7 +18,7 @@ Scan the person's scheduled tasks for token waste and misfits. Report what to ch
 2. **Cloud tasks.** List them with this session's tools when they exist. Otherwise ask the person to run `/schedule list` in Claude Code and paste the output, or note that cloud tasks were skipped.
 3. **Agents.** List `~/.claude/agents/` and any project `.claude/agents/` the prompts mention, to check that every agent or skill a prompt names still exists.
 
-For each task note: name, home (local or cloud), trigger, active or paused, and whether the prompt says to stay quiet when nothing changed.
+For each task note: name, home (local or cloud), trigger, active or paused, when it last ran and how that run ended if the listing shows it, and whether the prompt says to stay quiet when nothing changed.
 
 ## Flags
 
@@ -26,7 +26,8 @@ Call out each hit with the task name and one fix line.
 
 - **Too frequent.** Denser than hourly, for example every 15 minutes, about 96 runs a day. Prefer hourly or a few times a day. Prefer a GitHub or API trigger on a cloud task when the work starts from an event.
 - **Noisy empty runs.** The prompt never says to stay quiet when nothing changed. Add that line.
-- **Dead or duplicate.** Paused for weeks, the same job in two tasks, a finite watch past its end condition, or a prompt naming an agent or skill that no longer exists.
+- **Dead or duplicate.** Paused for weeks, the same job in two tasks, a finite watch past its end condition, or a prompt naming an agent or skill that no longer exists. A task named `<agent-name>-goal-check` is not a duplicate of its agent's task: it checks the goal from outside the agent. Keep it.
+- **Missed or failed run.** Only when the listing shows the last run. An active task whose last run ended in an error, or whose last run is more than one full interval overdue. A computer that slept gets one late catch-up run, so a late run alone is not a hit. Fix: run it now, and move the job to the cloud if it must run with the computer off.
 - **Wrong home.** A cloud task that needs this computer's files, plugins, or `~/.claude/agents/`, which a cloud run cannot see. A local task that must run while the computer is off.
 - **Too much access.** A cloud task carrying connectors its prompt never uses; all connectors are attached by default.
 - **No late-run guard.** A local task whose report depends on the time of day. After sleep it gets one catch-up run, possibly hours late.

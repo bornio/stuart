@@ -36,8 +36,8 @@ In the Code tab, say "I want to stop doing X", or type `/dr-eggbot:automate-anyt
 
 1. **Goal:** one line on what the work is actually for.
 2. **Process:** your steps and the judgment calls you make, tested on three real cases.
-3. **Loop:** where you find out how it went, and what should start the work.
-4. **Build:** Eggbot creates the new agent and, if the job runs on a schedule, sets up its scheduled task.
+3. **Loop:** where you find out how it went, what should start the work, and a separate check that the goal still holds.
+4. **Build:** Eggbot creates the new agent and, if the job runs on a schedule, sets up its scheduled tasks.
 
 **Using the new agent.** It's ready in your next Code tab session. Claude hands it matching work on its own, or you can ask for it by name: "Use the invoice-chaser agent on this week's invoices." To get rid of an agent, ask Claude to delete it.
 
@@ -50,7 +50,7 @@ If you said yes during setup, two checkups run on their own. Both stay quiet whe
 | Checkup | Runs | Looks for |
 | --- | --- | --- |
 | transcript-healthcheck | Weekday mornings | Frustration and repeated corrections in your recent Code tab sessions. It suggests a new skill, agent, or scheduled task |
-| routine-healthcheck | Monday mornings | Scheduled tasks that run too often, report nothing, are dead, or run in the wrong place |
+| routine-healthcheck | Monday mornings | Scheduled tasks that run too often, report nothing, are dead, missed a run, or run in the wrong place |
 
 Both appear in the Code tab under **Scheduled**, where you can pause them or click **Run now**. They run only while the app is open and the computer is awake.
 
@@ -82,7 +82,7 @@ Agents Eggbot built for you stay after you remove it. The checkup tasks stay too
 | automate-anything | Runs the whole flow, from goal to built agent |
 | find-the-goal | Gets past a step ("send the email") to the outcome it serves |
 | capture-the-process | Brain dump, play back, real cases, judgment rules |
-| close-the-loop | Feedback sources the agent can read, and a trigger |
+| close-the-loop | Feedback sources the agent can read, a trigger, and a goal check |
 | design-an-agent | Writes the agent and its scheduled task |
 | transcript-healthcheck | Mines recent chats for friction; suggests skills, agents, or tasks |
 | routine-healthcheck | Flags scheduled tasks that waste runs or live in the wrong place |

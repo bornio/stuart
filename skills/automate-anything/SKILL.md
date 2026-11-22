@@ -11,9 +11,9 @@ Run the stages in order. Each stage ends in something the person confirms. Build
 | Stage | Skill | Done when |
 |---|---|---|
 | 1. Goal | find-the-goal | The person agrees to a one-line goal that names an outcome, not a step |
-| 2. Process | capture-the-process | The person says the played-back process and its judgment calls are right |
-| 3. Loop | close-the-loop | The agent has a feedback source and a trigger |
-| 4. Build | design-an-agent | The agent file exists, reads back as planned, and its scheduled task exists or the person holds the line to create it |
+| 2. Process | capture-the-process | The person says the played-back process and its judgment calls are right, and the plan holds the saved cases |
+| 3. Loop | close-the-loop | The agent has a feedback source, a trigger, and a goal check |
+| 4. Build | design-an-agent | The agent file exists, reads back as planned, and its scheduled tasks exist or the person holds the lines to create them |
 
 ## Rules
 
@@ -21,7 +21,7 @@ Run the stages in order. Each stage ends in something the person confirms. Build
 - Assume the person is not technical. When they doubt an agent can do a step, say what the agent would actually do: click through the site in a browser, read the inbox through a connector, open the spreadsheet, write a small script.
 - The goal outranks the process. If a step does not serve the goal, say so and offer to drop it. If the person wants their exact process kept, keep it.
 - Stages 1 to 3 are planning only. The job itself waits for the agent.
-- Keep a running plan in your own notes: goal, steps, judgment calls, sources, feedback, trigger. Play the whole thing back once before stage 4.
+- Keep a running plan in your own notes: goal, steps, judgment calls, saved cases, sources, feedback, trigger, goal check. Play the whole thing back once before stage 4.
 - If the person already answered a stage elsewhere in the chat, play it back and confirm instead of asking again.
 
 ## Build
@@ -38,7 +38,9 @@ Hand the plan to design-an-agent. The plan maps onto the agent file:
 | Apps and sources | `tools`, and which connectors to connect first |
 | Never-do list | Body: anti-jobs, and tools left out |
 | Trigger | A scheduled task created per design-an-agent's scheduling reference |
+| Goal check | A second scheduled task, `<name>-goal-check`, whose prompt stands alone and does not name the agent |
+| Saved cases | The first prompt for the new agent, which runs them and keeps them in its memory |
 
 Then tell the person which connectors to connect first.
 
-After building, offer two things: one review of the process against the goal with a simpler way, if there is one; and a dry run of the new agent on one real case in a new session.
+After building, offer two things: one review of the process against the goal with a simpler way, if there is one; and a dry run of the new agent on the saved cases in a new session.

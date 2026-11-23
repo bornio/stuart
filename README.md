@@ -2,6 +2,8 @@
 
 Stuart is a plugin for the Claude app that plans a job with you, then builds a Claude agent that does it for you. Installing it takes about a minute, and you don't need the terminal.
 
+[Read the Stuart blog post](https://bornio.github.io/stuart/) for a walkthrough of how it works.
+
 Stuart is heavily based on [dr eggbot](https://x.ai/bot/_jOdbfkB16zxu7MRcmReE) by [@poteto](https://x.com/poteto).
 
 ## What you need

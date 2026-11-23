@@ -1,0 +1,1713 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Meet Stuart: The Agent That Turns Your Busywork Into Agents</title>
+  <meta name="description" content="A deep dive into Stuart (bornio/stuart), a zero-code Claude plugin that interviews you about repetitive work, captures your unspoken judgment calls, and builds narrow, self-checking agents." />
+  <style>
+    :root {
+      --bg: #faf8f4;
+      --bg-elevated: #ffffff;
+      --bg-subtle: #f2ede3;
+      --bg-code: #1f1e1b;
+      --ink: #1d1b18;
+      --ink-secondary: #524d45;
+      --ink-muted: #7c756b;
+      --ink-code: #f5f1e8;
+      --border: #e5dfd3;
+      --border-strong: #d2c9b8;
+      --accent: #c97d10;
+      --accent-bright: #e9a825;
+      --accent-soft: #fdf3dc;
+      --accent-ink: #6e4100;
+      --sage: #2b674c;
+      --sage-soft: #e7f3ec;
+      --rust: #b54534;
+      --rust-soft: #faeae7;
+      --blue: #2b5b84;
+      --blue-soft: #e8f1f8;
+      --shadow-sm: 0 1px 2px rgba(29, 27, 24, 0.05);
+      --shadow-md: 0 8px 24px rgba(29, 27, 24, 0.06);
+      --radius: 12px;
+      --radius-sm: 8px;
+      --font-serif: "Iowan Old Style", "Palatino Linotype", "Book Antiqua", Georgia, serif;
+      --font-sans: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      --font-mono: ui-monospace, "SFMono-Regular", Menlo, Monaco, Consolas, monospace;
+      --measure: 720px;
+      --wide: 940px;
+    }
+
+    [data-theme="dark"] {
+      --bg: #151412;
+      --bg-elevated: #1e1c19;
+      --bg-subtle: #26231f;
+      --bg-code: #100f0d;
+      --ink: #f0ece3;
+      --ink-secondary: #c2bab0;
+      --ink-muted: #8f887d;
+      --ink-code: #f0ece3;
+      --border: #2f2b25;
+      --border-strong: #433e36;
+      --accent: #eab03c;
+      --accent-bright: #f4c35d;
+      --accent-soft: rgba(234, 176, 60, 0.14);
+      --accent-ink: #f7cf78;
+      --sage: #67be94;
+      --sage-soft: rgba(103, 190, 148, 0.14);
+      --rust: #e57d6d;
+      --rust-soft: rgba(229, 125, 109, 0.14);
+      --blue: #7ab3e0;
+      --blue-soft: rgba(122, 179, 224, 0.14);
+      --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.25);
+      --shadow-md: 0 12px 32px rgba(0, 0, 0, 0.35);
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    html {
+      scroll-behavior: smooth;
+      background: var(--bg);
+      color: var(--ink);
+    }
+
+    body {
+      margin: 0;
+      font-family: var(--font-sans);
+      font-size: 17px;
+      line-height: 1.72;
+      background: var(--bg);
+      color: var(--ink);
+      -webkit-font-smoothing: antialiased;
+      transition: background 0.2s ease, color 0.2s ease;
+    }
+
+    /* Reading progress bar */
+    .progress-bar {
+      position: fixed;
+      top: 0;
+      left: 0;
+      height: 3px;
+      width: 0%;
+      background: linear-gradient(90deg, var(--accent), var(--accent-bright));
+      z-index: 1000;
+      transition: width 0.08s linear;
+    }
+
+    /* Top navigation */
+    .site-nav {
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      background: color-mix(in srgb, var(--bg) 88%, transparent);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--border);
+    }
+
+    .nav-inner {
+      max-width: var(--wide);
+      margin: 0 auto;
+      padding: 12px 24px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      text-decoration: none;
+      color: var(--ink);
+      font-weight: 600;
+      font-size: 15px;
+      letter-spacing: -0.01em;
+    }
+
+    .brand-dot {
+      width: 11px;
+      height: 11px;
+      border-radius: 50%;
+      background: var(--accent-bright);
+      box-shadow: 0 0 0 3px var(--accent-soft);
+      display: inline-block;
+    }
+
+    .nav-links {
+      display: flex;
+      align-items: center;
+      gap: 20px;
+      flex-wrap: wrap;
+    }
+
+    .nav-links a {
+      color: var(--ink-secondary);
+      text-decoration: none;
+      font-size: 14px;
+      font-weight: 500;
+      transition: color 0.15s ease;
+    }
+
+    .nav-links a:hover {
+      color: var(--accent);
+    }
+
+    .theme-btn {
+      appearance: none;
+      border: 1px solid var(--border);
+      background: var(--bg-elevated);
+      color: var(--ink-secondary);
+      border-radius: 999px;
+      padding: 5px 12px;
+      font-size: 13px;
+      font-family: var(--font-sans);
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      transition: border-color 0.15s ease, color 0.15s ease;
+    }
+
+    .theme-btn:hover {
+      border-color: var(--accent);
+      color: var(--ink);
+    }
+
+    /* Hero header */
+    .article-header {
+      max-width: var(--measure);
+      margin: 0 auto;
+      padding: 64px 24px 36px;
+    }
+
+    .eyebrow {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 12.5px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: var(--accent-ink);
+      background: var(--accent-soft);
+      padding: 4px 12px;
+      border-radius: 999px;
+      margin-bottom: 20px;
+    }
+
+    h1 {
+      font-family: var(--font-serif);
+      font-size: clamp(2.1rem, 4.6vw, 3.1rem);
+      line-height: 1.14;
+      letter-spacing: -0.025em;
+      margin: 0 0 20px;
+      font-weight: 700;
+      color: var(--ink);
+    }
+
+    .subtitle {
+      font-size: clamp(1.08rem, 2vw, 1.24rem);
+      line-height: 1.55;
+      color: var(--ink-secondary);
+      margin: 0 0 28px;
+      font-weight: 400;
+    }
+
+    .byline {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 10px 18px;
+      padding-top: 20px;
+      border-top: 1px solid var(--border);
+      font-size: 14px;
+      color: var(--ink-muted);
+    }
+
+    .byline strong {
+      color: var(--ink);
+      font-weight: 600;
+    }
+
+    .byline a {
+      color: var(--accent);
+      text-decoration: none;
+    }
+
+    .byline a:hover {
+      text-decoration: underline;
+    }
+
+    /* Main prose column */
+    main {
+      padding-bottom: 84px;
+    }
+
+    .prose {
+      max-width: var(--measure);
+      margin: 0 auto;
+      padding: 0 24px;
+    }
+
+    .wide {
+      max-width: var(--wide);
+      margin: 40px auto;
+      padding: 0 24px;
+    }
+
+    h2 {
+      font-family: var(--font-serif);
+      font-size: clamp(1.55rem, 2.8vw, 1.95rem);
+      line-height: 1.25;
+      letter-spacing: -0.02em;
+      margin: 56px 0 16px;
+      color: var(--ink);
+      scroll-margin-top: 80px;
+    }
+
+    h3 {
+      font-family: var(--font-sans);
+      font-size: 1.12rem;
+      line-height: 1.35;
+      margin: 32px 0 10px;
+      color: var(--ink);
+      font-weight: 650;
+      letter-spacing: -0.01em;
+    }
+
+    p {
+      margin: 0 0 20px;
+      color: var(--ink);
+    }
+
+    .lead::first-letter {
+      font-family: var(--font-serif);
+      float: left;
+      font-size: 3.45rem;
+      line-height: 0.85;
+      padding: 6px 10px 0 0;
+      color: var(--accent);
+      font-weight: 700;
+    }
+
+    a {
+      color: var(--accent);
+      text-underline-offset: 3px;
+    }
+
+    ul, ol {
+      margin: 0 0 22px;
+      padding-left: 24px;
+    }
+
+    li {
+      margin-bottom: 9px;
+    }
+
+    li strong {
+      color: var(--ink);
+    }
+
+    code {
+      font-family: var(--font-mono);
+      font-size: 0.86em;
+      background: var(--bg-subtle);
+      color: var(--ink);
+      padding: 2px 6px;
+      border-radius: 5px;
+      border: 1px solid var(--border);
+    }
+
+    /* Pull quote / Callout */
+    blockquote.pullquote {
+      margin: 34px 0;
+      padding: 22px 26px;
+      border-left: 4px solid var(--accent);
+      background: var(--bg-elevated);
+      border-radius: 0 var(--radius) var(--radius) 0;
+      box-shadow: var(--shadow-sm);
+    }
+
+    blockquote.pullquote p {
+      font-family: var(--font-serif);
+      font-size: 1.22rem;
+      line-height: 1.5;
+      margin: 0;
+      color: var(--ink);
+      font-style: italic;
+    }
+
+    blockquote.pullquote footer {
+      margin-top: 10px;
+      font-family: var(--font-sans);
+      font-style: normal;
+      font-size: 13.5px;
+      color: var(--ink-muted);
+    }
+
+    .callout {
+      margin: 30px 0;
+      padding: 22px 24px;
+      border-radius: var(--radius);
+      border: 1px solid var(--border);
+      background: var(--bg-elevated);
+      box-shadow: var(--shadow-sm);
+    }
+
+    .callout.sage {
+      border-color: color-mix(in srgb, var(--sage) 35%, var(--border));
+      background: linear-gradient(135deg, var(--sage-soft), var(--bg-elevated) 55%);
+    }
+
+    .callout.amber {
+      border-color: color-mix(in srgb, var(--accent) 40%, var(--border));
+      background: linear-gradient(135deg, var(--accent-soft), var(--bg-elevated) 55%);
+    }
+
+    .callout-label {
+      display: inline-block;
+      font-size: 11.5px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      margin-bottom: 8px;
+      color: var(--sage);
+    }
+
+    .callout.amber .callout-label {
+      color: var(--accent-ink);
+    }
+
+    .callout h4 {
+      margin: 0 0 10px;
+      font-size: 1.08rem;
+      line-height: 1.35;
+    }
+
+    .callout p:last-child {
+      margin-bottom: 0;
+    }
+
+    /* Quick stats strip */
+    .stats-strip {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 14px;
+      margin: 34px 0 12px;
+    }
+
+    .stat-card {
+      background: var(--bg-elevated);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 18px 18px 16px;
+      box-shadow: var(--shadow-sm);
+    }
+
+    .stat-value {
+      font-family: var(--font-serif);
+      font-size: 1.75rem;
+      font-weight: 700;
+      line-height: 1.1;
+      color: var(--accent);
+      margin-bottom: 6px;
+    }
+
+    .stat-label {
+      font-size: 13px;
+      line-height: 1.38;
+      color: var(--ink-secondary);
+    }
+
+    /* Diagram card */
+    .diagram-card {
+      background: var(--bg-elevated);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 26px 24px 20px;
+      box-shadow: var(--shadow-md);
+    }
+
+    .diagram-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-bottom: 18px;
+    }
+
+    .diagram-title {
+      font-size: 14px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      color: var(--ink);
+    }
+
+    .diagram-caption {
+      font-size: 13.5px;
+      color: var(--ink-muted);
+      margin-top: 14px;
+      line-height: 1.5;
+    }
+
+    .diagram-svg {
+      width: 100%;
+      height: auto;
+      display: block;
+    }
+
+    /* Stage cards */
+    .stage-block {
+      margin: 28px 0;
+      padding: 24px 26px;
+      background: var(--bg-elevated);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow-sm);
+    }
+
+    .stage-head {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 12px;
+      flex-wrap: wrap;
+    }
+
+    .stage-num {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 30px;
+      height: 30px;
+      border-radius: 50%;
+      background: var(--accent-soft);
+      color: var(--accent-ink);
+      font-weight: 700;
+      font-size: 14px;
+      flex-shrink: 0;
+    }
+
+    .stage-title {
+      margin: 0;
+      font-family: var(--font-serif);
+      font-size: 1.3rem;
+      line-height: 1.25;
+    }
+
+    .skill-pill {
+      margin-left: auto;
+      font-family: var(--font-mono);
+      font-size: 12px;
+      background: var(--bg-subtle);
+      color: var(--ink-secondary);
+      border: 1px solid var(--border);
+      padding: 3px 9px;
+      border-radius: 999px;
+    }
+
+    .stage-block p:last-child,
+    .stage-block ul:last-child {
+      margin-bottom: 0;
+    }
+
+    /* Interactive Job Shapes Explorer */
+    .shapes-box {
+      background: var(--bg-elevated);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 22px 24px;
+      margin: 26px 0;
+      box-shadow: var(--shadow-sm);
+    }
+
+    .shapes-label {
+      font-size: 12px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: var(--ink-muted);
+      margin-bottom: 12px;
+    }
+
+    .shape-tabs {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-bottom: 18px;
+    }
+
+    .shape-tab {
+      appearance: none;
+      border: 1px solid var(--border);
+      background: var(--bg-subtle);
+      color: var(--ink-secondary);
+      padding: 7px 14px;
+      border-radius: 999px;
+      font-size: 13.5px;
+      font-weight: 600;
+      font-family: var(--font-sans);
+      cursor: pointer;
+      transition: all 0.15s ease;
+    }
+
+    .shape-tab:hover {
+      border-color: var(--accent);
+      color: var(--ink);
+    }
+
+    .shape-tab[aria-selected="true"] {
+      background: var(--accent);
+      border-color: var(--accent);
+      color: #fff;
+    }
+
+    [data-theme="dark"] .shape-tab[aria-selected="true"] {
+      color: #151412;
+    }
+
+    .shape-panel {
+      display: grid;
+      grid-template-columns: 1.5fr 1fr;
+      gap: 18px;
+      padding-top: 14px;
+      border-top: 1px solid var(--border);
+    }
+
+    .shape-panel h4 {
+      margin: 0 0 6px;
+      font-size: 1rem;
+    }
+
+    .shape-panel p {
+      margin: 0;
+      font-size: 15px;
+      color: var(--ink-secondary);
+      line-height: 1.6;
+    }
+
+    .shape-meta {
+      background: var(--bg-subtle);
+      border-radius: var(--radius-sm);
+      padding: 12px 14px;
+      font-size: 13.5px;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .shape-meta-row {
+      display: flex;
+      justify-content: space-between;
+      gap: 12px;
+      border-bottom: 1px dashed var(--border-strong);
+      padding-bottom: 6px;
+    }
+
+    .shape-meta-row:last-child {
+      border-bottom: none;
+      padding-bottom: 0;
+    }
+
+    .shape-meta-row span:first-child {
+      color: var(--ink-muted);
+    }
+
+    .shape-meta-row span:last-child {
+      font-weight: 600;
+      color: var(--ink);
+      text-align: right;
+    }
+
+    /* Principles Grid */
+    .principles-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 16px;
+    }
+
+    .principle-card {
+      background: var(--bg-elevated);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 20px 22px;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      box-shadow: var(--shadow-sm);
+    }
+
+    .principle-top {
+      display: flex;
+      align-items: baseline;
+      justify-content: space-between;
+      gap: 10px;
+    }
+
+    .principle-num {
+      font-family: var(--font-mono);
+      font-size: 12px;
+      font-weight: 700;
+      color: var(--accent);
+    }
+
+    .principle-skill {
+      font-family: var(--font-mono);
+      font-size: 11.5px;
+      color: var(--ink-muted);
+    }
+
+    .principle-card h4 {
+      margin: 0;
+      font-family: var(--font-serif);
+      font-size: 1.08rem;
+      line-height: 1.3;
+      color: var(--ink);
+    }
+
+    .principle-card p {
+      margin: 0;
+      font-size: 14.5px;
+      line-height: 1.58;
+      color: var(--ink-secondary);
+    }
+
+    /* Healthchecks split */
+    .two-col {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 18px;
+      margin: 24px 0;
+    }
+
+    .feature-card {
+      background: var(--bg-elevated);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 22px 24px;
+      box-shadow: var(--shadow-sm);
+    }
+
+    .feature-badge {
+      display: inline-block;
+      font-size: 11.5px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      padding: 3px 9px;
+      border-radius: 999px;
+      margin-bottom: 10px;
+    }
+
+    .badge-amber {
+      background: var(--accent-soft);
+      color: var(--accent-ink);
+    }
+
+    .badge-blue {
+      background: var(--blue-soft);
+      color: var(--blue);
+    }
+
+    .badge-sage {
+      background: var(--sage-soft);
+      color: var(--sage);
+    }
+
+    .badge-rust {
+      background: var(--rust-soft);
+      color: var(--rust);
+    }
+
+    .feature-card h3 {
+      margin: 0 0 8px;
+      font-family: var(--font-serif);
+      font-size: 1.24rem;
+    }
+
+    .feature-card p {
+      font-size: 15px;
+      color: var(--ink-secondary);
+      margin-bottom: 14px;
+    }
+
+    .feature-card ul {
+      margin: 0;
+      padding-left: 18px;
+      font-size: 14.5px;
+      color: var(--ink-secondary);
+    }
+
+    .feature-card li {
+      margin-bottom: 6px;
+    }
+
+    /* Tables */
+    .table-wrap {
+      overflow-x: auto;
+      margin: 24px 0;
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      background: var(--bg-elevated);
+      box-shadow: var(--shadow-sm);
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 14.5px;
+      text-align: left;
+    }
+
+    th {
+      background: var(--bg-subtle);
+      color: var(--ink);
+      font-weight: 650;
+      padding: 12px 16px;
+      border-bottom: 1px solid var(--border);
+      white-space: nowrap;
+    }
+
+    td {
+      padding: 12px 16px;
+      border-bottom: 1px solid var(--border);
+      vertical-align: top;
+      color: var(--ink-secondary);
+      line-height: 1.55;
+    }
+
+    tr:last-child td {
+      border-bottom: none;
+    }
+
+    td strong {
+      color: var(--ink);
+    }
+
+    /* Code blocks */
+    .code-wrap {
+      position: relative;
+      margin: 24px 0;
+      border-radius: var(--radius);
+      overflow: hidden;
+      border: 1px solid var(--border-strong);
+      background: var(--bg-code);
+      box-shadow: var(--shadow-sm);
+    }
+
+    .code-bar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 9px 14px;
+      background: rgba(255, 255, 255, 0.05);
+      border-bottom: 1px solid rgba(255, 255, 255, 0.09);
+      font-family: var(--font-mono);
+      font-size: 12px;
+      color: #b7b0a4;
+    }
+
+    .copy-btn {
+      appearance: none;
+      border: 1px solid rgba(255, 255, 255, 0.16);
+      background: rgba(255, 255, 255, 0.07);
+      color: #ece6db;
+      font-family: var(--font-sans);
+      font-size: 12px;
+      padding: 3px 10px;
+      border-radius: 6px;
+      cursor: pointer;
+      transition: background 0.15s ease;
+    }
+
+    .copy-btn:hover {
+      background: rgba(255, 255, 255, 0.16);
+    }
+
+    pre {
+      margin: 0;
+      padding: 18px 20px;
+      overflow-x: auto;
+      font-family: var(--font-mono);
+      font-size: 13.5px;
+      line-height: 1.62;
+      color: var(--ink-code);
+    }
+
+    pre code {
+      background: none;
+      border: none;
+      padding: 0;
+      color: inherit;
+      font-size: inherit;
+    }
+
+    .tok-comment { color: #8c867a; }
+    .tok-key { color: #f2be5c; }
+    .tok-str { color: #8cd3a9; }
+    .tok-head { color: #87bfff; font-weight: 600; }
+
+    /* Permissions contrast */
+    .perm-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 16px;
+      margin: 24px 0;
+    }
+
+    .perm-card {
+      padding: 20px 22px;
+      border-radius: var(--radius);
+      border: 1px solid var(--border);
+      background: var(--bg-elevated);
+    }
+
+    .perm-card.allow {
+      border-top: 3px solid var(--sage);
+    }
+
+    .perm-card.never {
+      border-top: 3px solid var(--rust);
+    }
+
+    .perm-card h4 {
+      margin: 0 0 10px;
+      font-size: 0.98rem;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .perm-card.allow h4 { color: var(--sage); }
+    .perm-card.never h4 { color: var(--rust); }
+
+    .perm-card ul {
+      margin: 0;
+      padding-left: 18px;
+      font-size: 14.5px;
+      color: var(--ink-secondary);
+    }
+
+    .perm-card li {
+      margin-bottom: 6px;
+    }
+
+    /* Footer */
+    .article-footer {
+      max-width: var(--measure);
+      margin: 56px auto 0;
+      padding: 28px 24px 0;
+      border-top: 1px solid var(--border);
+      font-size: 14.5px;
+      color: var(--ink-muted);
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: space-between;
+      gap: 12px;
+    }
+
+    /* Responsive */
+    @media (max-width: 780px) {
+      .stats-strip {
+        grid-template-columns: repeat(2, 1fr);
+      }
+      .principles-grid,
+      .two-col,
+      .perm-grid,
+      .shape-panel {
+        grid-template-columns: 1fr;
+      }
+      .nav-links a {
+        display: none;
+      }
+      .article-header {
+        padding-top: 40px;
+      }
+      .skill-pill {
+        margin-left: 0;
+      }
+    }
+
+    @media print {
+      .site-nav, .progress-bar, .copy-btn, .theme-btn {
+        display: none !important;
+      }
+      body {
+        background: #fff;
+        color: #111;
+      }
+      .stage-block, .diagram-card, .principle-card, .feature-card {
+        break-inside: avoid;
+        box-shadow: none;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="progress-bar" id="progressBar" aria-hidden="true"></div>
+
+  <nav class="site-nav" aria-label="Article sections">
+    <div class="nav-inner">
+      <a class="brand" href="#top">
+        <span class="brand-dot" aria-hidden="true"></span>
+        <span>Stuart · Project Essay</span>
+      </a>
+      <div class="nav-links">
+        <a href="#pipeline">The 4 Stages</a>
+        <a href="#watchdog">Goal Check</a>
+        <a href="#principles">10 Principles</a>
+        <a href="#healthchecks">Healthchecks</a>
+        <a href="#architecture">Under the Hood</a>
+        <a href="#install">Install</a>
+        <button class="theme-btn" id="themeToggle" type="button" aria-label="Toggle dark mode">
+          <span id="themeIcon" aria-hidden="true">☾</span>
+          <span id="themeLabel">Dark</span>
+        </button>
+      </div>
+    </div>
+  </nav>
+
+  <article id="top">
+    <header class="article-header">
+      <div class="eyebrow">Project Deep Dive · Claude Plugin v2.0.0</div>
+      <h1>Meet Stuart: The Agent That Interviews You, Then Builds the Agent That Replaces Your Busywork</h1>
+      <p class="subtitle">
+        Most AI automations fail before the first run because we automate steps instead of outcomes—and forget the unspoken judgment calls that make the job actually work. Stuart is a zero-code Claude plugin designed to fix that.
+      </p>
+      <div class="byline">
+        <span><strong>Repository:</strong> <code>bornio/stuart</code></span>
+        <span>·</span>
+        <span><strong>Inspired by:</strong> <a href="https://x.ai/bot/_jOdbfkB16zxu7MRcmReE" target="_blank" rel="noopener">dr eggbot</a> by <a href="https://x.com/poteto" target="_blank" rel="noopener">@poteto</a></span>
+        <span>·</span>
+        <span><strong>Read time:</strong> ~8 min</span>
+      </div>
+    </header>
+
+    <main>
+      <section class="prose">
+        <p class="lead">
+          Ask someone what job they want to hand off to an AI agent, and they will almost always give you the wrong answer. They’ll say <em>“answer my DMs,”</em> or <em>“send the follow-up email,”</em> or <em>“check this spreadsheet every morning.”</em> They describe a motion, not a mission. And even when they do explain the mission, ninety percent of how they actually pull it off lives in muscle memory—which inbox wins when two records disagree, what “done” really means, and which edge cases make them pause and pick up the phone.
+        </p>
+
+        <p>
+          <strong>Stuart</strong> is a plugin for the Claude desktop app (and Claude Code CLI) built around a refreshingly stubborn premise: <em>don’t let an AI build an agent until it has actually understood the job.</em> Rather than acting as a do-everything assistant, Stuart is a <strong>meta-agent</strong>. Its single purpose is to sit down with you, unpack a task you do by hand, capture your real-world judgment calls, wire up feedback and safety checks, and then generate a tightly scoped Claude agent—plus its schedules—to do the work without you.
+        </p>
+
+        <p>
+          What makes the repository genuinely interesting to inspect is how little machinery it takes to do this well. There is no server, no database, no build step, and not a single line of Python or TypeScript. The entire project is <strong>1 agent file, 8 Markdown skills, 1 scheduling guide, and 2 tiny plugin manifests</strong>. It is pure operations design encoded as prompts—and it works just as smoothly for a small-business owner who has never opened a terminal as it does for a software engineer managing a team repository.
+        </p>
+
+        <div class="stats-strip" aria-label="Project facts at a glance">
+          <div class="stat-card">
+            <div class="stat-value">1</div>
+            <div class="stat-label">Meta-agent (<code>stuart:stuart</code>) that plans &amp; builds, never executes the job</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-value">8</div>
+            <div class="stat-label">Composable Markdown skills covering onboarding, planning, building &amp; audits</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-value">4</div>
+            <div class="stat-label">Confirmed planning stages before a single agent file gets written</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-value">0</div>
+            <div class="stat-label">Lines of runtime code or terminal commands needed to install and use</div>
+          </div>
+        </div>
+
+        <blockquote class="pullquote">
+          <p>“Automation is a goal plus a process, with an agent doing the process. This skill turns one person’s job into one Claude agent that does it without them.”</p>
+          <footer>— From <code>skills/automate-anything/SKILL.md</code></footer>
+        </blockquote>
+      </section>
+
+      <!-- Visual Architecture Diagram -->
+      <section class="wide" aria-labelledby="diagram-heading">
+        <div class="diagram-card">
+          <div class="diagram-header">
+            <span class="diagram-title" id="diagram-heading">How Stuart Turns a Manual Job Into a Self-Checking Agent</span>
+            <span style="font-size: 13px; color: var(--ink-muted);">End-to-end lifecycle</span>
+          </div>
+
+          <svg class="diagram-svg" viewBox="0 0 880 350" fill="none" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Diagram showing Stuart's 4 stages: Goal, Process, Loop, and Build, leading to a Dry Run, a Live Agent, and a separate Independent Goal Check watching raw sources.">
+            <defs>
+              <marker id="arrow" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+                <path d="M 0 1 L 10 5 L 0 9 z" fill="currentColor" />
+              </marker>
+            </defs>
+
+            <!-- Background band for planning stages -->
+            <rect x="12" y="14" width="638" height="148" rx="12" fill="var(--bg-subtle)" stroke="var(--border)" stroke-dasharray="5 5" />
+            <text x="28" y="37" fill="var(--ink-muted)" font-size="11" font-weight="700" font-family="var(--font-sans)" letter-spacing="0.08em">PLANNING ONLY — NO LIVE ACTIONS, CONFIRMED STAGE BY STAGE</text>
+
+            <!-- Stage 1 -->
+            <rect x="26" y="52" width="184" height="94" rx="10" fill="var(--bg-elevated)" stroke="var(--accent)" stroke-width="1.5" />
+            <text x="40" y="75" fill="var(--accent)" font-size="11" font-weight="700" font-family="var(--font-mono)">01 · find-the-goal</text>
+            <text x="40" y="96" fill="var(--ink)" font-size="14" font-weight="700" font-family="var(--font-serif)">Find the Goal</text>
+            <text x="40" y="114" fill="var(--ink-secondary)" font-size="11.5" font-family="var(--font-sans)">One-line outcome, job shape,</text>
+            <text x="40" y="130" fill="var(--ink-secondary)" font-size="11.5" font-family="var(--font-sans)">&amp; feasibility check</text>
+
+            <!-- Arrow 1->2 -->
+            <line x1="210" y1="99" x2="236" y2="99" stroke="var(--ink-muted)" stroke-width="1.6" marker-end="url(#arrow)" style="color: var(--ink-muted);" />
+
+            <!-- Stage 2 -->
+            <rect x="240" y="52" width="188" height="94" rx="10" fill="var(--bg-elevated)" stroke="var(--border-strong)" stroke-width="1.5" />
+            <text x="254" y="75" fill="var(--accent)" font-size="11" font-weight="700" font-family="var(--font-mono)">02 · capture-the-process</text>
+            <text x="254" y="96" fill="var(--ink)" font-size="14" font-weight="700" font-family="var(--font-serif)">Capture Process</text>
+            <text x="254" y="114" fill="var(--ink-secondary)" font-size="11.5" font-family="var(--font-sans)">Brain dump, playback, &amp; 3 real</text>
+            <text x="254" y="130" fill="var(--ink-secondary)" font-size="11.5" font-family="var(--font-sans)">cases (1 failure) → hard rules</text>
+
+            <!-- Arrow 2->3 -->
+            <line x1="428" y1="99" x2="452" y2="99" stroke="var(--ink-muted)" stroke-width="1.6" marker-end="url(#arrow)" style="color: var(--ink-muted);" />
+
+            <!-- Stage 3 -->
+            <rect x="456" y="52" width="180" height="94" rx="10" fill="var(--bg-elevated)" stroke="var(--border-strong)" stroke-width="1.5" />
+            <text x="470" y="75" fill="var(--accent)" font-size="11" font-weight="700" font-family="var(--font-mono)">03 · close-the-loop</text>
+            <text x="470" y="96" fill="var(--ink)" font-size="14" font-weight="700" font-family="var(--font-serif)">Close the Loop</text>
+            <text x="470" y="114" fill="var(--ink-secondary)" font-size="11.5" font-family="var(--font-sans)">Delivery, feedback sources,</text>
+            <text x="470" y="130" fill="var(--ink-secondary)" font-size="11.5" font-family="var(--font-sans)">trigger &amp; independent check</text>
+
+            <!-- Arrow 3->4 -->
+            <line x1="636" y1="99" x2="672" y2="99" stroke="var(--accent)" stroke-width="1.8" marker-end="url(#arrow)" style="color: var(--accent);" />
+
+            <!-- Stage 4 Build -->
+            <rect x="676" y="42" width="190" height="114" rx="10" fill="var(--accent-soft)" stroke="var(--accent)" stroke-width="1.8" />
+            <text x="690" y="66" fill="var(--accent-ink)" font-size="11" font-weight="700" font-family="var(--font-mono)">04 · design-an-agent</text>
+            <text x="690" y="88" fill="var(--ink)" font-size="15" font-weight="700" font-family="var(--font-serif)">Build &amp; Pause</text>
+            <text x="690" y="107" fill="var(--ink-secondary)" font-size="11.5" font-family="var(--font-sans)">Writes &lt;name&gt;.md agent,</text>
+            <text x="690" y="123" fill="var(--ink-secondary)" font-size="11.5" font-family="var(--font-sans)">creates paused schedules,</text>
+            <text x="690" y="139" fill="var(--ink-secondary)" font-size="11.5" font-family="var(--font-sans)">hands you a dry-run prompt</text>
+
+            <!-- Vertical arrow down from Build to Dry Run -->
+            <path d="M 771 156 L 771 190 L 664 190 L 664 214" stroke="var(--accent)" stroke-width="1.8" fill="none" marker-end="url(#arrow)" style="color: var(--accent);" />
+
+            <!-- Dry Run Gate -->
+            <rect x="556" y="218" width="216" height="110" rx="10" fill="var(--bg-elevated)" stroke="var(--blue)" stroke-width="1.6" />
+            <text x="572" y="241" fill="var(--blue)" font-size="11" font-weight="700" font-family="var(--font-mono)">PRE-FLIGHT GATE</text>
+            <text x="572" y="262" fill="var(--ink)" font-size="14" font-weight="700" font-family="var(--font-serif)">Dry Run on Saved Cases</text>
+            <text x="572" y="281" fill="var(--ink-secondary)" font-size="11.5" font-family="var(--font-sans)">Runs in a fresh session with zero</text>
+            <text x="572" y="297" fill="var(--ink-secondary)" font-size="11.5" font-family="var(--font-sans)">live sends/edits. Approve safe</text>
+            <text x="572" y="313" fill="var(--ink-secondary)" font-size="11.5" font-family="var(--font-sans)">permissions, then unpause.</text>
+
+            <!-- Arrow Dry Run -> Live Agent -->
+            <line x1="556" y1="273" x2="516" y2="273" stroke="var(--ink-muted)" stroke-width="1.6" marker-end="url(#arrow)" style="color: var(--ink-muted);" />
+
+            <!-- Live Working Agent -->
+            <rect x="302" y="218" width="210" height="110" rx="10" fill="var(--bg-elevated)" stroke="var(--border-strong)" stroke-width="1.6" />
+            <text x="318" y="241" fill="var(--ink-muted)" font-size="11" font-weight="700" font-family="var(--font-mono)">SCHEDULED / ON-DEMAND</text>
+            <text x="318" y="262" fill="var(--ink)" font-size="14" font-weight="700" font-family="var(--font-serif)">Your New Agent</text>
+            <text x="318" y="281" fill="var(--ink-secondary)" font-size="11.5" font-family="var(--font-sans)">Reads sources, drafts outputs,</text>
+            <text x="318" y="297" fill="var(--ink-secondary)" font-size="11.5" font-family="var(--font-sans)">tracks open cases, reads its</text>
+            <text x="318" y="313" fill="var(--ink-secondary)" font-size="11.5" font-family="var(--font-sans)">own feedback &amp; proposes edits.</text>
+
+            <!-- Independent Goal Check -->
+            <rect x="26" y="218" width="234" height="110" rx="10" fill="var(--sage-soft)" stroke="var(--sage)" stroke-width="1.8" />
+            <text x="42" y="241" fill="var(--sage)" font-size="11" font-weight="700" font-family="var(--font-mono)">&lt;name&gt;-goal-check</text>
+            <text x="42" y="262" fill="var(--ink)" font-size="14" font-weight="700" font-family="var(--font-serif)">Independent Watchdog</text>
+            <text x="42" y="281" fill="var(--ink-secondary)" font-size="11.5" font-family="var(--font-sans)">Reads raw sources directly —</text>
+            <text x="42" y="297" fill="var(--ink-secondary)" font-size="11.5" font-family="var(--font-sans)">never reads the agent’s memory</text>
+            <text x="42" y="313" fill="var(--ink-secondary)" font-size="11.5" font-family="var(--font-sans)">or reports. Alerts on misses.</text>
+
+            <!-- Dashed "no dependency" indicator between Watchdog and Agent -->
+            <line x1="260" y1="273" x2="302" y2="273" stroke="var(--rust)" stroke-width="1.4" stroke-dasharray="4 3" />
+            <circle cx="281" cy="273" r="9" fill="var(--bg-elevated)" stroke="var(--rust)" stroke-width="1.3" />
+            <text x="277" y="277" fill="var(--rust)" font-size="11" font-weight="700" font-family="var(--font-sans)">×</text>
+          </svg>
+
+          <p class="diagram-caption">
+            Notice the deliberate break between <strong>Your New Agent</strong> and <strong><code>&lt;name&gt;-goal-check</code></strong>: the goal checker never reads the working agent’s memory or reports, and runs in a separate environment (such as the cloud watching a local agent) whenever possible.
+          </p>
+        </div>
+      </section>
+
+      <!-- The 4 Stages -->
+      <section class="prose">
+        <h2 id="pipeline">The Four-Stage Conversation That Prevents Bad Automations</h2>
+
+        <p>
+          When you tell Claude <em>“I want to stop doing X”</em> (or invoke <code>/stuart:automate-anything</code>), Stuart does not rush to generate a prompt. Instead, it runs a strict four-stage dialogue. Each stage ends with something concrete you have to confirm, and Stuart saves the running plan after each stage so you can close your laptop and pick up later.
+        </p>
+
+        <div class="stage-block">
+          <div class="stage-head">
+            <span class="stage-num">1</span>
+            <h3 class="stage-title">Find the Goal — and Kill Bad Ideas Early</h3>
+            <span class="skill-pill">stuart:find-the-goal</span>
+          </div>
+          <p>
+            Stuart’s first rule is blunt: <strong>a step is not a goal.</strong> If you say you want an agent to send follow-up emails, Stuart asks what goes wrong when they don’t get sent, who notices, and what they lose—repeating until you land on a measurable outcome someone would actually pay for or miss (for example: <em>“Every booking request gets a confirmed slot within 4 hours during business hours, without you touching it”</em>).
+          </p>
+          <p>
+            Right after agreeing on the goal and its job shape, Stuart runs a <strong>quick feasibility check</strong> before wasting a minute on process mapping:
+          </p>
+          <ul>
+            <li><strong>Connector reality check:</strong> Does Claude actually have connectors for the apps involved? If the job relies on login-walled or anti-bot sites like LinkedIn, Instagram, or SSO/2FA portals, Stuart warns you plainly instead of promising fragile browser clicking.</li>
+            <li><strong>Don’t rebuild native features:</strong> If software you already pay for does the job natively—ad-platform rules, budget alerts, Google Alerts—Stuart tells you to use that first.</li>
+            <li><strong>Deadline vs. trigger math:</strong> Email and chat polling cannot satisfy sub-hourly SLAs. Stuart catches impossible timing upfront.</li>
+          </ul>
+        </div>
+
+        <!-- Interactive Job Shapes Explorer -->
+        <div class="shapes-box" aria-labelledby="shapes-heading">
+          <div class="shapes-label" id="shapes-heading">Interactive · The 5 Job Shapes Stuart Classifies in Stage 1</div>
+          <div class="shape-tabs" role="tablist" aria-label="Job shapes">
+            <button class="shape-tab" role="tab" aria-selected="true" data-shape="ongoing" type="button">Ongoing</button>
+            <button class="shape-tab" role="tab" aria-selected="false" data-shape="timeboxed" type="button">Time-boxed</button>
+            <button class="shape-tab" role="tab" aria-selected="false" data-shape="percase" type="button">Repeats per case</button>
+            <button class="shape-tab" role="tab" aria-selected="false" data-shape="ondemand" type="button">On-demand</button>
+            <button class="shape-tab" role="tab" aria-selected="false" data-shape="oneoff" type="button">One-off</button>
+          </div>
+          <div class="shape-panel" id="shapePanel" role="tabpanel">
+            <!-- Populated by JS with accessible initial fallback -->
+            <div>
+              <h4>Ongoing — Stays true week after week</h4>
+              <p>Work with no natural end date: keeping customer inquiries answered, drafting weekly status decks, or monitoring inbound leads. Stuart pairs the agent with a recurring trigger and an independent goal check so silent outages get caught.</p>
+            </div>
+            <div class="shape-meta">
+              <div class="shape-meta-row"><span>Scheduled trigger</span><span>Yes</span></div>
+              <div class="shape-meta-row"><span>Goal check</span><span>Yes (separate task)</span></div>
+              <div class="shape-meta-row"><span>Example</span><span>Weekly Monday deck</span></div>
+            </div>
+          </div>
+        </div>
+
+        <div class="stage-block">
+          <div class="stage-head">
+            <span class="stage-num">2</span>
+            <h3 class="stage-title">Capture the Process — Through Real Failures</h3>
+            <span class="skill-pill">stuart:capture-the-process</span>
+          </div>
+          <p>
+            You do most of your repetitive work on autopilot, which makes writing instructions from scratch painfully incomplete. Stuart extracts that tacit knowledge in four passes:
+          </p>
+          <ul>
+            <li><strong>Messy brain dump:</strong> Talk it out (even by voice) without organizing—or point Stuart at 2–3 past threads, docs, or sent emails to read without acting so it can draft the workflow for you to correct.</li>
+            <li><strong>Play back with marked guesses:</strong> Stuart condenses your dump into 5–8 plain steps, explicitly flagging every assumption it had to guess so you can fix them.</li>
+            <li><strong>Three real cases (one that went wrong):</strong> Stuart walks three concrete examples through your steps out loud. That surfaces the real rules: <em>Which source wins when an email says 3pm and the booking app says 4pm? What does “done” mean? How do we track open work so a retry doesn’t double-charge someone? When should the agent stop and hand back?</em></li>
+            <li><strong>Prune for a better way:</strong> Because the goal outranks the process, Stuart checks every step against Stage 1 and offers to drop dead weight or replace manual steps with a connector or tiny script—while still respecting your preference if you want to keep your way.</li>
+          </ul>
+          <p>
+            Domain-specific safety rules come baked in automatically: external drafts must cite sources for every number and flag unsourced claims instead of guessing; public outreach saves two scrubbed full-text examples you loved, one you’d never send, and a list of banned words; and for people or money data (candidates, payroll, contracts), agent memory stores <strong>IDs and links only</strong>—never raw contents, never ranking or rejecting people.
+          </p>
+        </div>
+
+        <div class="stage-block">
+          <div class="stage-head">
+            <span class="stage-num">3</span>
+            <h3 class="stage-title">Close the Loop — Visibility, Feedback, and Triggers</h3>
+            <span class="skill-pill">stuart:close-the-loop</span>
+          </div>
+          <p>
+            An agent that drops reports into an unread tab is dead on arrival. Stage 3 wires up four operational pieces:
+          </p>
+          <ul>
+            <li><strong>Delivery where you already look:</strong> Drafts go into Gmail, urgent alerts go to a Slack DM to yourself, and open cases live in the Notion table, Google Sheet, or CRM you already open—never buried only in Claude’s Scheduled tab.</li>
+            <li><strong>Readable feedback sources:</strong> Stuart asks, <em>“If you did this yourself, where would you find out it went badly?”</em> Your edits to its drafts, customer replies, Google/Yelp reviews, and refunds all become sources the agent can read. When something misfires, it matches the failure by a shared case ID, replays its saved test cases <em>plus</em> the new failure on paper, reports every mismatch (never hiding a conflict when your policy may have evolved), and proposes an edit to the agent file for your approval.</li>
+            <li><strong>The right trigger &amp; home:</strong> Local desktop tasks for work needing local files or plugins; cloud tasks for jobs that must run with your laptop closed (including GitHub event triggers and HTTP webhooks).</li>
+            <li><strong>An independent goal check:</strong> A second, completely separate scheduled task that verifies the outcome itself—explained in detail below.</li>
+          </ul>
+        </div>
+
+        <div class="stage-block">
+          <div class="stage-head">
+            <span class="stage-num">4</span>
+            <h3 class="stage-title">Build, Dry-Run, and Graduate Safely</h3>
+            <span class="skill-pill">stuart:design-an-agent</span>
+          </div>
+          <p>
+            Only now does Stuart touch disk. It first checks your existing <code>~/.claude/agents/</code> and <code>.claude/agents/</code> folders—extending an existing agent if one already owns the job, or copying working conventions from a sibling. Then it writes a crisp Markdown agent file, reads it back to verify the YAML frontmatter and tool names, and creates any scheduled tasks <strong>paused</strong>.
+          </p>
+          <p>
+            Before anything runs unattended, Stuart hands you a ready-to-paste <strong>dry-run prompt</strong> for a fresh Code tab session. The new agent walks through your saved real cases using only the provided facts—without sending, paying, or mutating anything live—and tells you everywhere its decision differs from the right outcome.
+          </p>
+        </div>
+
+        <!-- Permissions Contrast -->
+        <h3>The Permission Line: What Gets “Always Allow” (and What Never Does)</h3>
+        <p>
+          Once the dry run passes, you run the scheduled task manually once via <strong>Run now</strong> to answer permission prompts. Stuart draws a bright, non-negotiable line between safe autonomy and irreversible side effects:
+        </p>
+
+        <div class="perm-grid">
+          <div class="perm-card allow">
+            <h4>✓ Safe for “Always Allow”</h4>
+            <ul>
+              <li>Reading inboxes, trackers, calendars, and docs</li>
+              <li>Saving drafts (Gmail drafts, doc drafts)</li>
+              <li>Updating your own tracking Sheet or Notion table</li>
+              <li>Notifying <em>yourself</em> (Slack DM or email to self)</li>
+            </ul>
+          </div>
+          <div class="perm-card never">
+            <h4>✕ Never “Always Allow”</h4>
+            <ul>
+              <li>Sending emails or messages to other people</li>
+              <li>Posting publicly, publishing, or merging code</li>
+              <li>Paying money or changing CRM / database records</li>
+              <li>Creating accounts, granting access, or deleting</li>
+            </ul>
+          </div>
+        </div>
+
+        <p>
+          Even when you eventually decide to hand over that final send or publish step, Stuart refuses to treat “undo” as a safety net. Graduating an agent past drafting requires a <strong>per-item verification check paired with either an undo mechanism or a pre-release reviewer</strong>—never undo alone.
+        </p>
+
+        <!-- Watchdog Spotlight -->
+        <h2 id="watchdog">The Smartest Idea in the Repo: The Independent Goal Check</h2>
+
+        <p>
+          If you borrow only one architectural pattern from Stuart for your own AI systems, make it this one.
+        </p>
+
+        <p>
+          Most agent builders add a self-report at the end of a workflow: <em>“Tell me if anything went wrong.”</em> Stuart points out the two fatal flaws with that approach: <strong>a stopped agent reports nothing, and an agent cannot report work it never saw.</strong> Under quiet-by-default scheduling, a healthy quiet week and a completely broken pipeline produce the exact same output—silence.
+        </p>
+
+        <div class="callout sage">
+          <span class="callout-label">Architectural Pattern · &lt;agent-name&gt;-goal-check</span>
+          <h4>Never let an agent grade its own homework</h4>
+          <p>
+            For every ongoing, time-boxed, or repeats-per-case job—even when the human still clicks “send”—Stuart creates a second, standalone scheduled task named <code>&lt;agent-name&gt;-goal-check</code>. Its rules are strict:
+          </p>
+          <ul style="margin-top: 10px; margin-bottom: 0;">
+            <li><strong>Reads raw sources directly:</strong> It never names the working agent and never reads the working agent’s reports or memory.</li>
+            <li><strong>Preserves deadlines across outages:</strong> For a 4-hour booking SLA, it checks whether <em>any</em> booking request older than 4 business hours is still unconfirmed—not merely “requests from the last day,” which misses breaches and false-alarms on brand-new messages.</li>
+            <li><strong>Lives in a different home when possible:</strong> If the working agent runs locally on your laptop, the goal check runs in the cloud—because a check on the same computer sleeps when the agent does.</li>
+            <li><strong>Knows when silence isn’t enough:</strong> Quiet when sources were read cleanly and nothing is overdue—except for rare, high-stakes obligations (like contract auto-renewals), where it sends a short periodic all-clear heartbeat listing the next upcoming deadlines.</li>
+          </ul>
+        </div>
+
+        <!-- 10 Principles -->
+        <h2 id="principles">Ten Opinionated Principles Behind Every Skill</h2>
+        <p>
+          Reading through all eight skill files reveals a remarkably coherent design philosophy. Every rule in Stuart’s documentation maps cleanly back to the specific skill that enforces it:
+        </p>
+      </section>
+
+      <section class="wide">
+        <div class="principles-grid">
+          <div class="principle-card">
+            <div class="principle-top">
+              <span class="principle-num">01</span>
+              <span class="principle-skill">find-the-goal</span>
+            </div>
+            <h4>A step is not a goal.</h4>
+            <p>Push past actions (“send the email”) until you find an outcome someone would pay for or miss. The goal outranks the process, so steps that don’t serve it can be cut.</p>
+          </div>
+
+          <div class="principle-card">
+            <div class="principle-top">
+              <span class="principle-num">02</span>
+              <span class="principle-skill">automate-anything</span>
+            </div>
+            <h4>Use what already exists.</h4>
+            <p>If an app you already pay for solves the job natively, use it instead of building an agent. Verify connectors and deadline math before designing anything.</p>
+          </div>
+
+          <div class="principle-card">
+            <div class="principle-top">
+              <span class="principle-num">03</span>
+              <span class="principle-skill">capture-the-process</span>
+            </div>
+            <h4>Judgment comes from real cases.</h4>
+            <p>Three real examples—including one that went sideways—surface which source wins, what “done” means, and when to hand back far better than abstract checklists.</p>
+          </div>
+
+          <div class="principle-card">
+            <div class="principle-top">
+              <span class="principle-num">04</span>
+              <span class="principle-skill">capture-the-process · design-an-agent</span>
+            </div>
+            <h4>The saved cases are the test suite.</h4>
+            <p>The agent replays saved cases before its first live run and before proposing any rule edit. Every mismatch is reported—never hidden—because your policy may have changed.</p>
+          </div>
+
+          <div class="principle-card">
+            <div class="principle-top">
+              <span class="principle-num">05</span>
+              <span class="principle-skill">close-the-loop</span>
+            </div>
+            <h4>The agent reads its own feedback.</h4>
+            <p>Your edits to its drafts, customer reviews, and refunds become readable inputs. Approved lessons edit the agent file itself, while memory holds observations and cases only.</p>
+          </div>
+
+          <div class="principle-card">
+            <div class="principle-top">
+              <span class="principle-num">06</span>
+              <span class="principle-skill">close-the-loop</span>
+            </div>
+            <h4>Results land where you already look.</h4>
+            <p>Drafts, outputs, and urgent alerts route to Gmail, Slack DMs, or your existing Notion/Sheets tracker—never stranded inside a tab you forget to check.</p>
+          </div>
+
+          <div class="principle-card">
+            <div class="principle-top">
+              <span class="principle-num">07</span>
+              <span class="principle-skill">close-the-loop</span>
+            </div>
+            <h4>Something outside the agent checks the goal.</h4>
+            <p>A separate <code>&lt;name&gt;-goal-check</code> task verifies the real outcome directly from source systems, ideally from another machine/cloud home, catching silent crashes and blind spots.</p>
+          </div>
+
+          <div class="principle-card">
+            <div class="principle-top">
+              <span class="principle-num">08</span>
+              <span class="principle-skill">design-an-agent</span>
+            </div>
+            <h4>The final step stays with you first.</h4>
+            <p>Agents start by drafting; humans send, post, or pay. Graduating to full execution requires a per-item check paired with undo or a pre-release reviewer—never undo alone.</p>
+          </div>
+
+          <div class="principle-card">
+            <div class="principle-top">
+              <span class="principle-num">09</span>
+              <span class="principle-skill">design-an-agent · capture-the-process</span>
+            </div>
+            <h4>Access enforces the limits.</h4>
+            <p>Narrow tools and connectors to match anti-jobs—and stay honest that allowlists alone aren’t airtight when Bash, browsers, memory tools, or default-all cloud connectors are active.</p>
+          </div>
+
+          <div class="principle-card">
+            <div class="principle-top">
+              <span class="principle-num">10</span>
+              <span class="principle-skill">close-the-loop · routine-healthcheck</span>
+            </div>
+            <h4>Every run costs, so quiet is the default.</h4>
+            <p>Nothing changed? End without a report. Schedules run as rarely as the goal allows, with deliberate exceptions only for QA checklists and rare, costly all-clear heartbeats.</p>
+          </div>
+        </div>
+      </section>
+
+      <!-- Healthchecks -->
+      <section class="prose">
+        <h2 id="healthchecks">Two Built-In Checkups That Keep Your Automation Fleet Healthy</h2>
+
+        <p>
+          Building agents is only half the story; over time, automations rot, schedules burn tokens polling empty inboxes every fifteen minutes, and new points of friction creep into your daily workflow. During setup (<code>/stuart:getting-started</code>), Stuart offers to install two local scheduled checkups. Both stay completely silent when there is nothing worth proposing, and neither builds or changes anything until you pick a suggestion.
+        </p>
+
+        <div class="two-col">
+          <div class="feature-card">
+            <span class="feature-badge badge-amber">Weekday Mornings · Local</span>
+            <h3>Transcript Healthcheck</h3>
+            <p>
+              Mines your recent Claude Code session logs (<code>~/.claude/projects/&lt;project&gt;/&lt;session-id&gt;.jsonl</code>) using parallel subagents, skipping delegated subagents and scheduled prompts to focus purely on human-typed friction.
+            </p>
+            <ul>
+              <li>Hunts for frustration signals: <em>“stop”</em>, <em>“wrong”</em>, <em>“i said”</em>, <em>“undo”</em>, repeated instructions, redoing an agent’s output by hand, or abandoned threads.</li>
+              <li>Tracks its watermark in <code>~/.claude/stuart/state.json</code> so it only scans new sessions since the last run.</li>
+              <li>Leads with at most 5 bullets and proposes evidence-backed <strong>skills</strong>, <strong>agents</strong>, or <strong>scheduled tasks</strong>.</li>
+            </ul>
+          </div>
+
+          <div class="feature-card">
+            <span class="feature-badge badge-blue">Monday Mornings · Local</span>
+            <h3>Routine Healthcheck</h3>
+            <p>
+              Audits your local and cloud scheduled tasks (cross-referencing <code>~/.claude/agents/</code> and repo agents) against seven concrete waste and reliability flags:
+            </p>
+            <ul>
+              <li><strong>Too frequent:</strong> Denser than hourly (e.g., every 15 min = ~96 runs/day).</li>
+              <li><strong>Noisy empty runs:</strong> Missing a stay-quiet rule on no-op runs.</li>
+              <li><strong>Dead or duplicate:</strong> Paused for weeks, expired watches, or missing agents (explicitly sparing <code>*-goal-check</code>).</li>
+              <li><strong>Missed/failed runs, wrong home, over-attached cloud connectors,</strong> and <strong>missing late-run sleep guards</strong>.</li>
+            </ul>
+          </div>
+        </div>
+
+        <!-- Local vs Cloud table -->
+        <h3>Local vs. Cloud Scheduling: Where an Agent Should Live</h3>
+        <p>
+          A surprisingly practical gem inside the repo is <code>skills/design-an-agent/references/scheduling.md</code>. Every scheduled run starts a fresh session (so standing jobs never bloat one endless conversation), and Stuart matches each job to the right runtime home:
+        </p>
+
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>Home / Trigger</th>
+                <th>Best For</th>
+                <th>Reach &amp; Quirks</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><strong>On demand</strong></td>
+                <td>Ad-hoc reusable jobs (“Use the invoice-chaser agent…”)</td>
+                <td>Triggered by plain speech, automatic routing via <code>description</code>, or <code>@agent-&lt;name&gt;</code>.</td>
+              </tr>
+              <tr>
+                <td><strong>Local scheduled task</strong><br /><span style="font-size: 12.5px; color: var(--ink-muted);">Claude desktop app</span></td>
+                <td>Jobs needing local files, user plugins, local MCP servers, or <code>~/.claude/agents/</code></td>
+                <td>Runs only while the app is open and computer is awake. Fires one catch-up run on wake—so time-sensitive prompts include a late-run guard (e.g., <em>“If it is after 5pm, report only what was missed”</em>).</td>
+              </tr>
+              <tr>
+                <td><strong>Cloud scheduled task</strong><br /><span style="font-size: 12.5px; color: var(--ink-muted);">Schedule / GitHub / API</span></td>
+                <td>Jobs that must run with the computer off, repo events (PRs/releases), or HTTP webhooks</td>
+                <td>Runs on a fresh repo clone with connected apps (min 1-hour interval). Cannot see local files or <code>~/.claude/agents/</code>; all connectors attach by default, so Stuart strips them down to only what the job needs.</td>
+              </tr>
+              <tr>
+                <td><strong><code>/loop</code></strong></td>
+                <td>Short-lived polling inside a single active session</td>
+                <td>Temporary watch that ends cleanly when the session ends.</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <!-- Architecture / Under the Hood -->
+        <h2 id="architecture">Under the Hood: Anatomy of a Pure-Prompt Plugin</h2>
+
+        <p>
+          If you open the repository, the entire project fits comfortably on one screen. There is no glue code to maintain—just clean separation of responsibilities between the coordinator agent and its eight focused skills:
+        </p>
+
+        <div class="code-wrap">
+          <div class="code-bar">
+            <span>Repository layout · 13 files total</span>
+            <span>bornio/stuart</span>
+          </div>
+          <pre><code><span class="tok-head">.claude-plugin/</span>
+├── plugin.json                        <span class="tok-comment"># Plugin metadata (v2.0.0)</span>
+└── marketplace.json                   <span class="tok-comment"># Marketplace registry entry</span>
+<span class="tok-head">agents/</span>
+└── stuart.md                          <span class="tok-comment"># The stuart:stuart meta-agent (yellow, user memory)</span>
+<span class="tok-head">skills/</span>
+├── getting-started/SKILL.md           <span class="tok-comment"># 4-question onboarding (name, tone, scope, checkups)</span>
+├── automate-anything/SKILL.md         <span class="tok-comment"># Orchestrates stages 1–4 + feasibility check</span>
+├── find-the-goal/SKILL.md             <span class="tok-comment"># Outcome discovery + 5 job shapes</span>
+├── capture-the-process/SKILL.md       <span class="tok-comment"># Brain dump, playback, 3 real cases, rules</span>
+├── close-the-loop/SKILL.md            <span class="tok-comment"># Delivery, feedback loop, trigger, goal check</span>
+├── design-an-agent/
+│   ├── SKILL.md                       <span class="tok-comment"># Tight agent-file spec, coding vs non-coding, dry-run</span>
+│   └── references/scheduling.md       <span class="tok-comment"># Local vs cloud runtimes, guards, permission hygiene</span>
+├── transcript-healthcheck/SKILL.md    <span class="tok-comment"># Parallel subagent friction miner on local logs</span>
+└── routine-healthcheck/SKILL.md       <span class="tok-comment"># 7-flag audit for wasteful or broken schedules</span>
+README.md                              <span class="tok-comment"># Non-technical install guide &amp; principles table</span></code></pre>
+        </div>
+
+        <p>
+          One subtle detail in <code>agents/stuart.md</code> shows how carefully the author thought through real Claude Code execution: Stuart explicitly handles <strong>delegated subagent mode</strong>. Because a subagent cannot pause mid-run to ask you follow-up questions, Stuart refuses to guess or build from an incomplete brief. If any required plan field is missing when delegated, it returns the exact questions to ask—one per line—and builds nothing.
+        </p>
+
+        <h3>What a Stuart-Built Agent File Looks Like</h3>
+        <p>
+          Every agent Stuart generates follows a tight, opinionated anatomy—YAML frontmatter for routing and least-privilege access, followed by an eight-part prompt body with zero fluff or “I can also help with…” sprawl:
+        </p>
+
+        <div class="code-wrap">
+          <div class="code-bar">
+            <span>~/.claude/agents/&lt;name&gt;.md · Generated agent blueprint</span>
+            <span>Markdown + YAML</span>
+          </div>
+          <pre><code>---
+<span class="tok-key">name</span>: <span class="tok-str">booking-dispatcher</span>               <span class="tok-comment"># Short kebab-case, matches filename</span>
+<span class="tok-key">description</span>: <span class="tok-str">Confirm every inbound booking request within 4 business hours...</span>
+<span class="tok-key">tools</span>: <span class="tok-str">[mcp__gmail__search, mcp__gmail__create_draft, mcp__calendar__list]</span>
+<span class="tok-key">model</span>: <span class="tok-str">inherit</span>                         <span class="tok-comment"># Or haiku (cheap/repetitive) / opus (hard)</span>
+<span class="tok-key">memory</span>: <span class="tok-str">user</span>                           <span class="tok-comment"># Observations &amp; saved cases only (IDs/links for PII)</span>
+<span class="tok-key">color</span>: <span class="tok-str">green</span>
+---
+
+<span class="tok-comment"># 1. One job (first sentence)</span>
+Your one job: confirm every inbound booking request within 4 business hours.
+
+<span class="tok-comment"># 2. Process (5–8 short steps)</span>
+<span class="tok-comment"># 3. Judgment calls (which source wins, what "done" means)</span>
+<span class="tok-comment"># 4. Stop &amp; hand back (exact escalation triggers)</span>
+<span class="tok-comment"># 5. Feedback check (replay saved cases + failure on paper; report all mismatches)</span>
+<span class="tok-comment"># 6. Anti-jobs (adjacent work it never does, and where that work goes)</span>
+<span class="tok-comment"># 7. Voice (scrubbed full-text examples &amp; banned words when writing publicly)</span>
+<span class="tok-comment"># 8. Quiet default (end without a report on scheduled no-op runs)</span></code></pre>
+        </div>
+
+        <p>
+          For <strong>coding agents</strong>, Stuart automatically bakes in three extra guardrails: short plain replies, reproducing bugs <em>before</em> attempting fixes, and adding <code>isolation: worktree</code> in frontmatter whenever the agent edits code alongside you so it never tramples your working tree.
+        </p>
+
+        <!-- Install & First Run -->
+        <h2 id="install">Getting Started in About a Minute</h2>
+
+        <p>
+          Stuart is built to live in the Claude desktop app’s <strong>Code</strong> tab—not because you have to write code, but because that is where Claude stores agents and local scheduled tasks.
+        </p>
+
+        <ol>
+          <li>Open the Claude desktop app, go to <strong>Customize → Plugins</strong>.</li>
+          <li>Select <strong>Add → Add marketplace</strong> and enter <code>bornio/stuart</code>, then add <strong>Stuart</strong>.</li>
+          <li>Open the <strong>Code</strong> tab and start a new session in one dedicated empty folder (like <code>Documents/Claude</code>—avoid Desktop or Downloads).</li>
+          <li>Type <code>/stuart:getting-started</code> and send it.</li>
+        </ol>
+
+        <p>Prefer the terminal with Claude Code CLI? One command installs the plugin:</p>
+
+        <div class="code-wrap">
+          <div class="code-bar">
+            <span>Claude Code CLI install</span>
+            <button class="copy-btn" type="button" data-copy="claude plugin install stuart --marketplace bornio/stuart">Copy</button>
+          </div>
+          <pre><code>claude plugin install stuart --marketplace bornio/stuart</code></pre>
+        </div>
+
+        <p>
+          During onboarding, Stuart asks just four questions—one at a time: what to call you (and casual vs. plain tone), whether you write code (non-coders automatically default to <code>~/.claude/agents/</code> so repos never come up; coders choose repo-shared or global), whether you want the weekday/Monday checkups, and one job you want off your plate. From there, you’re already in Stage 1.
+        </p>
+
+        <div class="callout amber">
+          <span class="callout-label">Zero Lock-In</span>
+          <h4>Your agents outlive Stuart</h4>
+          <p>
+            Every agent Stuart creates is a standard Markdown file in Claude’s native agents folder, and every schedule is a native Claude scheduled task. If you ever disable or remove the Stuart plugin, every agent and workflow it built for you keeps working untouched.
+          </p>
+        </div>
+
+        <!-- Closing -->
+        <h2>Why Stuart Matters Beyond Its Own Plugin</h2>
+
+        <p>
+          It is easy to look at a 13-file Markdown repository and think, <em>“Wait, that’s it?”</em> That simplicity is the whole point. Stuart treats AI automation not as a prompt-tricks problem, but as a <strong>human-centered operations problem</strong>.
+        </p>
+
+        <p>
+          It assumes you don’t know your own process until you test it against three real cases. It assumes your agents will eventually crash silently unless an independent check watches the real world. It assumes you shouldn’t hand over the keys to send emails or move money on day one. And it assumes that the best automation assistant is quiet when nothing is wrong, honest when a website can’t be automated, and polite enough to ask one question at a time.
+        </p>
+
+        <p>
+          Even if you never install it, reading through Stuart’s eight skills is a compact masterclass in how to design AI agents that survive contact with real work.
+        </p>
+      </section>
+    </main>
+
+    <footer class="article-footer">
+      <span>Written from the source of <strong>Stuart v2.0.0</strong> (<code>bornio/stuart</code>).</span>
+      <span><a href="#top">Back to top ↑</a></span>
+    </footer>
+  </article>
+
+  <script>
+    // Reading progress bar
+    const progressBar = document.getElementById('progressBar');
+    function updateProgress() {
+      const scrollTop = window.scrollY || document.documentElement.scrollTop;
+      const docHeight = document.documentElement.scrollHeight - window.innerHeight;
+      const pct = docHeight > 0 ? Math.min(100, Math.max(0, (scrollTop / docHeight) * 100)) : 0;
+      progressBar.style.width = pct + '%';
+    }
+    window.addEventListener('scroll', updateProgress, { passive: true });
+    updateProgress();
+
+    // Theme toggle (respects system preference initially)
+    const themeToggle = document.getElementById('themeToggle');
+    const themeIcon = document.getElementById('themeIcon');
+    const themeLabel = document.getElementById('themeLabel');
+    const prefersDark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
+    let currentTheme = prefersDark ? 'dark' : 'light';
+
+    function applyTheme(theme) {
+      currentTheme = theme;
+      document.documentElement.setAttribute('data-theme', theme);
+      if (theme === 'dark') {
+        themeIcon.textContent = '☀';
+        themeLabel.textContent = 'Light';
+      } else {
+        themeIcon.textContent = '☾';
+        themeLabel.textContent = 'Dark';
+      }
+    }
+    applyTheme(currentTheme);
+
+    themeToggle.addEventListener('click', () => {
+      applyTheme(currentTheme === 'dark' ? 'light' : 'dark');
+    });
+
+    // Interactive Job Shapes explorer
+    const SHAPES = {
+      ongoing: {
+        title: 'Ongoing — Stays true week after week',
+        desc: 'Work with no natural end date: keeping customer inquiries answered, drafting weekly status decks, or monitoring inbound leads. Stuart pairs the agent with a recurring trigger and an independent goal check so silent outages get caught.',
+        trigger: 'Yes (schedule or event)',
+        goalCheck: 'Yes (separate task)',
+        example: 'Weekly Monday deck'
+      },
+      timeboxed: {
+        title: 'Time-boxed — Ongoing until a hard end date',
+        desc: 'Temporary campaigns, hiring sprints, or saving toward a target date. Works like an ongoing job, except Stuart appends an automatic end-date reminder (“After <date>, report that this task can be deleted”) so finished routines never linger.',
+        trigger: 'Yes (with end-date guard)',
+        goalCheck: 'Yes (separate task)',
+        example: 'Hire 1 engineer this Q'
+      },
+      percase: {
+        title: 'Repeats per case — One agent sweeping a shared tracker',
+        desc: 'Jobs that recur for each invoice, hire, onboarding, or product launch. Stuart explicitly avoids spawning one scheduled task per case; instead, one ongoing agent sweeps your existing tracker (Notion, Sheet, CRM) using a consistent case ID.',
+        trigger: 'Yes (daily/periodic sweep)',
+        goalCheck: 'Yes (separate task)',
+        example: 'Unpaid invoice chasing'
+      },
+      ondemand: {
+        title: 'On-demand — Reusable whenever you ask',
+        desc: 'Workflows you invoke manually when needed (“Use the feedback-ranker agent on this export”). Because you initiate each run yourself, Stuart skips triggers and goal checks to avoid unnecessary background overhead.',
+        trigger: 'No (manual / routed)',
+        goalCheck: 'No',
+        example: 'Rank product feedback'
+      },
+      oneoff: {
+        title: 'One-off — Runs once and finishes',
+        desc: 'Finite cleanup, migration, or research tasks that end the moment the goal is met. No recurring schedule, no ongoing monitor—just a clean, tightly bounded execution.',
+        trigger: 'No',
+        goalCheck: 'No',
+        example: 'Audit Q3 vendor contracts'
+      }
+    };
+
+    const shapeTabs = document.querySelectorAll('.shape-tab');
+    const shapePanel = document.getElementById('shapePanel');
+
+    function renderShape(key) {
+      const s = SHAPES[key];
+      if (!s) return;
+      shapeTabs.forEach((btn) => {
+        btn.setAttribute('aria-selected', btn.dataset.shape === key ? 'true' : 'false');
+      });
+      shapePanel.innerHTML = `
+        <div>
+          <h4>${s.title}</h4>
+          <p>${s.desc}</p>
+        </div>
+        <div class="shape-meta">
+          <div class="shape-meta-row"><span>Scheduled trigger</span><span>${s.trigger}</span></div>
+          <div class="shape-meta-row"><span>Goal check</span><span>${s.goalCheck}</span></div>
+          <div class="shape-meta-row"><span>Example</span><span>${s.example}</span></div>
+        </div>
+      `;
+    }
+
+    shapeTabs.forEach((btn) => {
+      btn.addEventListener('click', () => renderShape(btn.dataset.shape));
+    });
+
+    // Copy buttons
+    document.querySelectorAll('.copy-btn').forEach((btn) => {
+      btn.addEventListener('click', async () => {
+        const text = btn.getAttribute('data-copy');
+        if (!text) return;
+        try {
+          await navigator.clipboard.writeText(text);
+          const prev = btn.textContent;
+          btn.textContent = 'Copied';
+          setTimeout(() => { btn.textContent = prev; }, 1600);
+        } catch {
+          btn.textContent = 'Select & copy';
+        }
+      });
+    });
+  </script>
+</body>
+</html>

@@ -2,6 +2,8 @@
 
 Stuart is a plugin for the Claude app that plans a job with you, then builds a Claude agent that does it for you. Installing it takes about a minute, and you don't need the terminal.
 
+Stuart is heavily based on [dr eggbot](https://x.ai/bot/_jOdbfkB16zxu7MRcmReE) by [@poteto](https://x.com/poteto).
+
 ## What you need
 
 - **The Claude desktop app**, signed in. Stuart builds agents and schedules in the app's **Code** tab — no coding needed, that's just where Claude keeps agents and schedules.

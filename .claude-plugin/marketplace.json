@@ -1,12 +1,12 @@
 {
-  "name": "dr-eggbot",
+  "name": "stuart",
   "owner": {
-    "name": "Dr. Eggbot"
+    "name": "Stuart"
   },
-  "description": "Dr. Eggbot: turn a job you do by hand into a Claude agent.",
+  "description": "Stuart turns a job you do by hand into a Claude agent.",
   "plugins": [
     {
-      "name": "dr-eggbot",
+      "name": "stuart",
       "source": "./",
       "description": "Turn a job you do by hand into a Claude agent: find the goal, capture the process, close the feedback loop, build the agent and its schedule."
     }

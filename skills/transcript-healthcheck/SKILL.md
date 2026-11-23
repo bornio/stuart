@@ -13,7 +13,7 @@ Scan Claude Code transcripts on this computer for user friction in a time window
 
 ## Window
 
-1. Read `last_transcript_healthcheck` from `~/.claude/dr-eggbot/state.json`. The window runs from that time to now.
+1. Read `last_transcript_healthcheck` from `~/.claude/stuart/state.json`. The window runs from that time to now.
 2. Without it, use the last 24 hours, unless the task or the person names another window.
 3. Transcripts older than the retention period (30 days by default) are gone; say so if the window reaches past it.
 
@@ -46,7 +46,7 @@ Lead with at most 5 bullets. Then a short list of proposals, each tagged skill, 
 
 When the scheduled task fires and nothing is worth proposing, end without a report.
 
-After a successful run, write the current time to `last_transcript_healthcheck` in `~/.claude/dr-eggbot/state.json`, creating the file if needed and keeping its other keys.
+After a successful run, write the current time to `last_transcript_healthcheck` in `~/.claude/stuart/state.json`, creating the file if needed and keeping its other keys.
 
 ## Implement, after the person picks
 

@@ -1,48 +1,48 @@
-# Dr. Eggbot: install and use
+# Stuart: install and use
 
-Dr. Eggbot is a plugin for the Claude app that plans a job with you, then builds a Claude agent that does it for you. Installing it takes about a minute, and you don't need the terminal.
+Stuart is a plugin for the Claude app that plans a job with you, then builds a Claude agent that does it for you. Installing it takes about a minute, and you don't need the terminal.
 
 ## What you need
 
-- **The Claude desktop app**, signed in. Eggbot builds agents and schedules in the app's **Code** tab — no coding needed, that's just where Claude keeps agents and schedules.
-- **Access to this GitHub repository**, `bornio/dr-eggbot`. It is private, so Claude asks you to connect your GitHub account during the install.
+- **The Claude desktop app**, signed in. Stuart builds agents and schedules in the app's **Code** tab — no coding needed, that's just where Claude keeps agents and schedules.
+- **Access to this GitHub repository**, `bornio/stuart`. It is private, so Claude asks you to connect your GitHub account during the install.
 
 ## Install
 
 1. In the Claude app, open **Customize**, then **Plugins**.
-2. Select **Add**, then **Add marketplace**, and enter `bornio/dr-eggbot`. Connect your GitHub account when the dialog asks.
-3. Dr. Eggbot now shows up among your plugins. Select it and add it.
-4. Open the **Code** tab and start a new session on one empty folder you make for Eggbot (such as `Claude` in Documents — avoid picking Desktop or Downloads). Type `/` and you should see 8 skills that start with `dr-eggbot`.
+2. Select **Add**, then **Add marketplace**, and enter `bornio/stuart`. Connect your GitHub account when the dialog asks.
+3. Stuart now shows up among your plugins. Select it and add it.
+4. Open the **Code** tab and start a new session on one empty folder you make for Stuart (such as `Claude` in Documents — avoid picking Desktop or Downloads). Type `/` and you should see 8 skills that start with `stuart:`.
 
-If you use Claude Code in a terminal, the same install is one line: `/plugin install dr-eggbot --marketplace bornio/dr-eggbot`.
+If you use Claude Code in a terminal, run `claude plugin install stuart --marketplace bornio/stuart`.
 
 ## First run
 
-In a Code tab session, type `/dr-eggbot:getting-started` and send it. Eggbot asks one question at a time:
+In a Code tab session, type `/stuart:getting-started` and send it. Stuart asks one question at a time:
 
 1. What to call you, and whether you like it casual or plain.
 2. Whether you write code — non-coders get one default home for all agents; coders choose between this repo or all projects.
 3. Whether you want the automatic checkups (see below).
-4. One job you'd like off your plate. Eggbot starts planning it right away.
+4. One job you'd like off your plate. Stuart starts planning it right away.
 
-After that, you can just describe what you want and Claude will pick the right Eggbot skill on its own.
+After that, you can just describe what you want and Claude will pick the right Stuart skill on its own.
 
 ## Automate a job
 
-In the Code tab, say "I want to stop doing X", or type `/dr-eggbot:automate-anything`. Eggbot plans with you in four stages and only builds at the end:
+In the Code tab, say "I want to stop doing X", or type `/stuart:automate-anything`. Stuart plans with you in four stages and only builds at the end:
 
 1. **Goal:** one line on what the work is actually for, and the job's shape: ongoing, time-boxed, repeats per case, on-demand, or one-off.
 2. **Process:** your steps and the judgment calls you make, tested on three real cases.
 3. **Loop:** where results and alerts land, where you find out how it went, and for jobs that run on a schedule, what starts the work and checks that the goal still holds.
-4. **Build:** Eggbot creates the new agent and, if the job runs on a schedule, sets up its scheduled tasks paused.
+4. **Build:** Stuart creates the new agent and, if the job runs on a schedule, sets up its scheduled tasks paused.
 
-**Before it runs on its own.** Eggbot hands you a dry-run prompt. Paste it into a new Code tab session. The agent walks through your saved cases without sending, paying, or changing anything, and tells you where its result differs from the right outcome. When the dry run passes, find the scheduled tasks in the Code tab under **Scheduled**, press **Run now** once, answer the permission prompts, and turn the tasks on.
+**Before it runs on its own.** Stuart hands you a dry-run prompt. Paste it into a new Code tab session. The agent walks through your saved cases without sending, paying, or changing anything, and tells you where its result differs from the right outcome. When the dry run passes, find the scheduled tasks in the Code tab under **Scheduled**, press **Run now** once, answer the permission prompts, and turn the tasks on.
 
 Choose "always allow" only for reading, saving drafts, updating your own tracker, and notifying yourself. Never choose it for sending to other people, posting, paying, changing CRM or database records, creating accounts, granting access, merging, or deleting.
 
 **Using the new agent.** It's ready in your next Code tab session. Claude hands it matching work on its own, or you can ask for it by name: "Use the invoice-chaser agent on this week's invoices." To get rid of an agent, ask Claude to delete it.
 
-**Schedules & apps.** Turn on app connectors under **Settings → Connectors**. Eggbot sets up scheduled tasks for you, and you'll find them in the Code tab under **Scheduled**. A task on your computer runs only while the app is open and the computer is awake. A cloud task runs with the computer off, and uses your connected apps (and a GitHub repo when needed).
+**Schedules & apps.** Turn on app connectors under **Settings → Connectors**. Stuart sets up scheduled tasks for you, and you'll find them in the Code tab under **Scheduled**. A task on your computer runs only while the app is open and the computer is awake. A cloud task runs with the computer off, and uses your connected apps (and a GitHub repo when needed).
 
 ## Principles
 
@@ -50,11 +50,11 @@ These are the rules the skills follow. Each one names the skill that carries it.
 
 | Principle | In practice | Skill |
 | --- | --- | --- |
-| **A step is not a goal.** | People name a step, such as sending the email. Eggbot asks what the step is for until the answer is an outcome someone would pay for or miss. The goal outranks the process, so a step that does not serve the goal can go. | find-the-goal |
-| **Use what already exists.** | If an app you already pay for does the job itself, use that first. Eggbot also checks that the apps have connectors and that the deadline fits the trigger. | automate-anything |
+| **A step is not a goal.** | People name a step, such as sending the email. Stuart asks what the step is for until the answer is an outcome someone would pay for or miss. The goal outranks the process, so a step that does not serve the goal can go. | find-the-goal |
+| **Use what already exists.** | If an app you already pay for does the job itself, use that first. Stuart also checks that the apps have connectors and that the deadline fits the trigger. | automate-anything |
 | **Judgment comes from real cases.** | You do most of the job without thinking. Three real cases, one of which went wrong, show which source wins, what done means, and when to hand back. Each answer becomes a rule. | capture-the-process |
 | **The saved cases are the test.** | The agent walks through them before its first live run and before any change to its rules. It reports every mismatch, because a mismatch can mean your policy changed. | capture-the-process, design-an-agent |
-| **The agent reads its own feedback.** | Eggbot asks where you would find out the work went badly, and makes each answer a source the agent can read. Your edits to its drafts count. The agent proposes a rule change and you approve it. | close-the-loop |
+| **The agent reads its own feedback.** | Stuart asks where you would find out the work went badly, and makes each answer a source the agent can read. Your edits to its drafts count. The agent proposes a rule change and you approve it. | close-the-loop |
 | **Results land where you already look.** | Drafts, results, and urgent alerts go to a place you open anyway. Open cases sit in a tracker you already use. | close-the-loop |
 | **Something outside the agent checks the goal.** | A stopped agent reports nothing, and an agent cannot report work it never saw. The goal check reads the sources directly and never reads the agent's reports or memory. It runs in a different place from the agent where the job allows, because a check on the same computer sleeps when the agent does. Every scheduled job gets one, even when you still do the final step. | close-the-loop |
 | **The final step stays with you first.** | The agent drafts and you send, post, or pay. Handing that step over later needs a check on each item, paired with a way to undo or a reviewer before release. Undo alone is never enough. | design-an-agent |
@@ -77,18 +77,18 @@ Both appear in the Code tab under **Scheduled**, where you can pause them or cli
 All of these are in **Customize**, then **Plugins**:
 
 - **Update it:** select **Check for updates** on the marketplace you added. Turn on **Sync automatically** to get new versions without asking.
-- **Turn it off:** open **Dr. Eggbot** and use the **Disable plugin** toggle.
-- **Remove it:** open **Dr. Eggbot**, open the plugin's menu, and select **Remove**.
+- **Turn it off:** open **Stuart** and use the **Disable plugin** toggle.
+- **Remove it:** open **Stuart**, open the plugin's menu, and select **Remove**.
 
-Agents Eggbot built for you stay after you remove it. The checkup tasks stay too; delete them in the Code tab under **Scheduled**.
+Agents Stuart built for you stay after you remove it. The checkup tasks stay too; delete them in the Code tab under **Scheduled**.
 
 ## If something doesn't work
 
 | What you see | Try this |
 | --- | --- |
-| No `dr-eggbot` skills in the `/` menu | Start a new Code tab session, since plugins load when a session starts. Check that the plugin is turned on under **Customize**, then **Plugins** |
-| Claude can't find or open the repository | Check that your GitHub account has access to `bornio/dr-eggbot`. In the dialog, select **Connect GitHub** or **Install the Claude GitHub App** if it offers either |
-| Eggbot plans with you but can't create the agent | Building agents and schedules works only in a Code tab session on your computer, not in a regular chat or a cloud session |
+| No `stuart:` skills in the `/` menu | Start a new Code tab session, since plugins load when a session starts. Check that the plugin is turned on under **Customize**, then **Plugins** |
+| Claude can't find or open the repository | Check that your GitHub account has access to `bornio/stuart`. In the dialog, select **Connect GitHub** or **Install the Claude GitHub App** if it offers either |
+| Stuart plans with you but can't create the agent | Building agents and schedules works only in a Code tab session on your computer, not in a regular chat or a cloud session |
 | A checkup didn't run | The app was closed or the computer was asleep. It catches up once when the computer wakes |
 | A new agent doesn't show up | Start a new Code tab session, since new agents load when a session starts |
 
@@ -105,4 +105,4 @@ Agents Eggbot built for you stay after you remove it. The checkup tasks stay too
 | transcript-healthcheck | Mines recent chats for friction; suggests skills, agents, or tasks |
 | routine-healthcheck | Flags scheduled tasks that waste runs or live in the wrong place |
 
-Plus one agent, `dr-eggbot`, which runs the flow and remembers your name and tone.
+The `stuart:stuart` agent runs the flow and remembers your name and tone.

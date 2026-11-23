@@ -7,12 +7,11 @@ Stuart is heavily based on [dr eggbot](https://x.ai/bot/_jOdbfkB16zxu7MRcmReE) b
 ## What you need
 
 - **The Claude desktop app**, signed in. Stuart builds agents and schedules in the app's **Code** tab — no coding needed, that's just where Claude keeps agents and schedules.
-- **Access to this GitHub repository**, `bornio/stuart`. It is private, so Claude asks you to connect your GitHub account during the install.
 
 ## Install
 
 1. In the Claude app, open **Customize**, then **Plugins**.
-2. Select **Add**, then **Add marketplace**, and enter `bornio/stuart`. Connect your GitHub account when the dialog asks.
+2. Select **Add**, then **Add marketplace**, and enter `bornio/stuart`.
 3. Stuart now shows up among your plugins. Select it and add it.
 4. Open the **Code** tab and start a new session on one empty folder you make for Stuart (such as `Claude` in Documents — avoid picking Desktop or Downloads). Type `/` and you should see 8 skills that start with `stuart:`.
 
@@ -89,7 +88,7 @@ Agents Stuart built for you stay after you remove it. The checkup tasks stay too
 | What you see | Try this |
 | --- | --- |
 | No `stuart:` skills in the `/` menu | Start a new Code tab session, since plugins load when a session starts. Check that the plugin is turned on under **Customize**, then **Plugins** |
-| Claude can't find or open the repository | Check that your GitHub account has access to `bornio/stuart`. In the dialog, select **Connect GitHub** or **Install the Claude GitHub App** if it offers either |
+| Claude can't find the marketplace | Check that you entered `bornio/stuart` in **Add marketplace** |
 | Stuart plans with you but can't create the agent | Building agents and schedules works only in a Code tab session on your computer, not in a regular chat or a cloud session |
 | A checkup didn't run | The app was closed or the computer was asleep. It catches up once when the computer wakes |
 | A new agent doesn't show up | Start a new Code tab session, since new agents load when a session starts |

@@ -9,11 +9,11 @@ Say in one line what you do: you design Claude agents, and if they bring a job t
 Ask one at a time, skipping anything already answered:
 
 1. What should I call you, and do you want me casual or plain?
-2. Do you write code? If yes, ask whether new agents should default to this repo (`.claude/agents/`, shared with the team) or to all their projects (`~/.claude/agents/`).
-3. Do you want regular checkups that look for friction in your Claude Code chats and for wasteful scheduled tasks? If yes, create the two tasks below at the times they pick.
+2. Do you write code? If yes, ask whether new agents should default to this repo (`.claude/agents/`, shared with the team) or to all their projects (`~/.claude/agents/`). If no, default to `~/.claude/agents/` (all sessions), save that default so build time never asks about repos, and suggest using one dedicated empty folder (like `Claude` in Documents) for Eggbot sessions.
+3. Do you want regular checkups that look for friction in your Code-tab sessions (not regular chats) and for wasteful scheduled tasks? If yes, create the two tasks below at the times they pick.
 4. What is one job you would like off your plate?
 
-Save their name, tone, and default agent scope. Running as the dr-eggbot agent, write them to your memory. Otherwise ask before adding one line to `~/.claude/CLAUDE.md`.
+Save their name, tone, and default agent scope. Running as the dr-eggbot agent, write them to your memory. Otherwise ask before saving those preferences to their Claude setup file (`~/.claude/CLAUDE.md`) — explain it in plain words without jargon if they do not write code.
 
 For question 4, run automate-anything with their answer.
 

@@ -14,8 +14,9 @@ The goal is what the person wants at the end. The process is how they get there 
    - Who notices, and what do they lose?
    - Does this bring in money, save money, save your time, or keep customers happy?
 3. Make it measurable when you can. Ask how they would know it worked: a count, a time, a dollar amount, a review score.
-4. Write the goal as one line and ask them to correct it. Example: "Every booking request gets a confirmed slot within an hour, without you touching it."
-5. Stop when they say it is right.
+4. Write the goal as one line and ask them to correct it. Example: "Every booking request gets a confirmed slot within 4 hours during business hours, without you touching it."
+5. Confirm the job shape and note it in the plan: **ongoing** (stays true week after week), **time-boxed** (ongoing until a date, with an end-date reminder), **repeats per case** (each hire, invoice, or launch — one ongoing agent sweeping an existing tracker, never one task per case), **on-demand** (reusable when asked — no trigger or goal check), or **one-off** (ends once done — no trigger or goal check).
+6. Stop when they say it is right.
 
 ## If they cannot describe it
 
@@ -30,4 +31,4 @@ Interview them. One question at a time about their day, what they dread, and wha
 - Turn product feedback into a ranked fix list.
 - Have the weekly meeting deck ready every Monday.
 
-Done when the person agrees to the one-line goal.
+Done when the person agrees to the one-line goal and the job shape.
